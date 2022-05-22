@@ -45,17 +45,19 @@ function visibleModal() {
 // }
 
 const timerLabel = document.querySelector('.time');
-const timeLimit = 10 * 1000;
-let startTime = Date.now();
+const timeLimit = time * 1000;
+let startTime;
 function updateTimer() {
-  const timeLeft = startTime + timeLimit - Date.now();
+  let timeLeft = startTime + timeLimit - Date.now();
   const timeoutId = setTimeout(() => {
     updateTimer();
   }, 10);
-  if (timeLeft < 0) {
+  if (timeLeft <= 0) {
+    timeLeft = 0;
     clearTimeout(timeoutId);
-    return (timerLabel.textContent = '0.00');
+    return timeLeft;
   }
+
   return (timeLeft / 1000).toFixed(2);
 }
 
@@ -87,6 +89,7 @@ function modalKeyEvent() {
 const wordInput = document.querySelector('.word-input');
 let isPlaying = false;
 function run() {
+  startTime = Date.now();
   getWords(); // プログラムが始まると、getWords関数が実行し、単語をサーバーから持ってくる。
   isPlaying = true; // ゲームを始める
   wordInput.removeAttribute('disabled'); // .word-inputのdiabled属性を削除
@@ -97,7 +100,7 @@ function run() {
 
 /* ゲームを終了する */
 function checkStatus() {
-  if (missings.length === 30 || time === 0) {
+  if (missings.length === 30 || updateTimer() === 0) {
     wordInput.setAttribute('disabled', '');
     isPlaying = false;
     clearInterval(checkInterval);
@@ -165,7 +168,7 @@ function animate() {
   currectCount.innerHTML = `Level : ${count}`; // count出力
   currectScore.innerHTML = `Score : ${score}`; // score出力
   currentWordCount.innerHTML = `Word : ${words.length}`; // Word出力
-  timerLabel.innerHTML = `Time [${updateTimer()}]`;
+  timerLabel.innerHTML = `Time   ${updateTimer()}`;
 }
 
 /* 単語を作るcreateWord()関数はそれぞれのclassを生成 */
@@ -177,7 +180,7 @@ function createWord() {
     const distance = Math.random() * i + 150;
     let x = (canvas.width / 3) * i + distance;
     let y = 0; // 初期y座標
-    let dy = Math.random() * 0.1 + (Math.random() * level + speed); // 初期y軸の速度
+    let dy = Math.random() * 0.5 + (Math.random() * level + speed); // 初期y軸の速度
 
     wordArray.push(new Word(x, y, dy, distance, words[0])); // class Wordを生成し、wordArrayに入れて配列に作る。
     oldWords.push(words.shift()); // サーバーからもらった単語のwords配列の要素を最初から次々と入れる。
@@ -260,7 +263,6 @@ function checkMatch(e) {
       alert('이미 정답으로 입력했습니다.');
       wordInput.value = '';
     } else if (oldWords.includes(wordInput.value)) {
-      time = 10;
       count++;
       answers.push(wordInput.value);
       let inputValue = wordArray[oldWords.indexOf(wordInput.value)].word;
@@ -273,9 +275,9 @@ function checkMatch(e) {
       } else {
         score += 10;
       }
+
       wordArray[oldWords.indexOf(wordInput.value)].word = '';
       speed += 0.05;
-
       wordInput.classList.remove('is-invalid');
       wordInput.classList.add('is-valid');
       wordInput.value = '';
