@@ -131,6 +131,8 @@ function animate() {
   const currectScore = document.querySelector('.score');
 
   const tryCount = document.querySelector('.try-count');
+  const life = document.querySelector('.life');
+
   ctx.clearRect(0, 0, canvas.width, canvas.height); // canvasで書いたもの消す。残像をなくすため
 
   if (!isPlaying) {
@@ -140,7 +142,7 @@ function animate() {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = colors[0];
-    ctx.fillText('GAME OVER', innerWidth / 2, innerHeight / 2);
+    ctx.fillText('GAME OVER', innerWidth / 2, innerHeight / 2 - 60);
     resetBtn.classList.remove('invisible');
     return;
   }
@@ -149,6 +151,7 @@ function animate() {
     wordArray[i].update(); // それぞれのclass Wordにあるメソッドupdate()を実行。
   }
 
+  life.innerHTML = `Life : ${25 - missings.length}`;
   tryCount.innerHTML = `Try : ${tryArray.length}`;
   currectCount.innerHTML = `Level : ${count}`; // count出力
   currectScore.innerHTML = `Score : ${score}`; // score出力
