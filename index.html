@@ -5,6 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Typing Game</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css"
+    />
     <link rel="stylesheet" href="./css/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link
@@ -25,10 +29,12 @@
     <div class="wrap">
       <header>
         <div class="inner">
-          <h1>말랑말랑 산성비</h1>
+          <h1>Acid Rain</h1>
           <div class="scoreboard">
+            <div class="try-count"></div>
             <div class="score"></div>
             <div class="count"></div>
+            <div class="word-count"></div>
           </div>
         </div>
       </header>
@@ -70,15 +76,42 @@
                 onclick="run()"
               ></button>
             </div>
-            <div class="modal-body">...</div>
+            <div class="modal-body">
+              <div role="group" aria-label="Basic radio toggle button group">
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="btnradio"
+                  id="english"
+                  autocomplete="off"
+                  onclick="language()"
+                  checked
+                />
+                <label class="btn btn-outline-success" for="english"
+                  >English</label
+                >
+
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="btnradio"
+                  id="japanese"
+                  autocomplete="off"
+                  onclick="language()"
+                />
+                <label class="btn btn-outline-success" for="japanese"
+                  >日本語</label
+                >
+              </div>
+            </div>
             <div class="modal-footer">
               <button
                 type="button"
-                class="btn btn-secondary"
+                class="btn btn-warning"
                 data-bs-dismiss="modal"
                 onclick="run()"
               >
-                START
+                Start
               </button>
             </div>
           </div>
