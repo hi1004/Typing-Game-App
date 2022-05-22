@@ -12,6 +12,8 @@ let count = 1;
 let score = 0;
 let answers = [];
 let tryArray = [];
+let missings = [];
+let checkInterval;
 let level = 0.5;
 let URL = `https://random-word.ryanrk.com/api/jp/word/random/${
   level * 100 // ランダム単語50個を持ってくる
@@ -52,7 +54,17 @@ function run() {
   isPlaying = true; // ゲームを始める
   wordInput.removeAttribute('disabled'); // .word-inputのdiabled属性を削除
   wordInput.placeholder = '';
+  checkInterval = setInterval(checkStatus, 50);
+
   animate(); // animate関数を実行
+}
+
+function checkStatus() {
+  if (missings.length === 25) {
+    wordInput.setAttribute('disabled', '');
+    isPlaying = false;
+    clearInterval(checkInterval);
+  }
 }
 
 /* axiosライブラリーを使い、単語をOpen APIで持ってくる */
@@ -90,7 +102,7 @@ let wordArray = [];
 
 const createWords = setInterval(() => {
   createWord();
-}, 8000); // 5秒ずつcreateWord()実行。
+}, 6000); // 6秒ずつcreateWord()実行。
 
 function createWord() {
   words = words.slice(0, 50);
@@ -109,6 +121,7 @@ function createWord() {
   }
 }
 
+const resetBtn = document.querySelector('.reset-btn');
 function animate() {
   /* requestAnimationFrameが１秒で６０回実行する*/
   const currentWordCount = document.querySelector('.word-count');
@@ -118,12 +131,24 @@ function animate() {
   const currectScore = document.querySelector('.score');
 
   const tryCount = document.querySelector('.try-count');
-  requestAnimationFrame(animate);
-
   ctx.clearRect(0, 0, canvas.width, canvas.height); // canvasで書いたもの消す。残像をなくすため
+
+  if (!isPlaying) {
+    isPlaying = true;
+    ctx.beginPath();
+    ctx.font = '10vw Noto Sans JP';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = colors[0];
+    ctx.fillText('GAME OVER', innerWidth / 2, innerHeight / 2);
+    resetBtn.classList.remove('invisible');
+    return;
+  }
+  requestAnimationFrame(animate);
   for (let i = 0; i < wordArray.length; i++) {
     wordArray[i].update(); // それぞれのclass Wordにあるメソッドupdate()を実行。
   }
+
   tryCount.innerHTML = `Try : ${tryArray.length}`;
   currectCount.innerHTML = `Level : ${count}`; // count出力
   currectScore.innerHTML = `Score : ${score}`; // score出力
@@ -177,6 +202,13 @@ class Word {
 
   /* y軸追加速度を移動させ、持続的にcanvasに書くメソッド */
   update() {
+    if (this.y > innerHeight) {
+      missings.push(this.word);
+      missings = missings.filter((element, index) => {
+        return missings.indexOf(element) === index;
+      });
+    }
+
     this.y += this.dy;
     this.draw();
     wordInput.focus();
@@ -186,7 +218,10 @@ class Word {
 function checkMatch(e) {
   if (e.keyCode == 13) {
     tryArray.push(wordInput.value);
-    if (answers.includes(wordInput.value)) {
+    if (missings.includes(wordInput.value)) {
+      alert('이미 지나간 단어입니다.');
+      gameOver();
+    } else if (answers.includes(wordInput.value)) {
       alert('이미 정답으로 입력했습니다.');
       wordInput.value = '';
     } else if (oldWords.includes(wordInput.value)) {
