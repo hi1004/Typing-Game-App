@@ -36,14 +36,6 @@ function visibleModal() {
   displayModal.click();
 }
 
-// const setTime = setInterval(() => {
-//   time--;
-// }, 1000);
-// if (time < 0) {
-//   clearInterval(setTime);
-//   alert('시간초과');
-// }
-
 const timerLabel = document.querySelector('.time');
 const timeLimit = time * 1000;
 let startTime;
@@ -57,7 +49,6 @@ function updateTimer() {
     clearTimeout(timeoutId);
     return timeLeft;
   }
-
   return (timeLeft / 1000).toFixed(2);
 }
 
@@ -89,13 +80,13 @@ function modalKeyEvent() {
 const wordInput = document.querySelector('.word-input');
 let isPlaying = false;
 function run() {
-  startTime = Date.now();
   getWords(); // プログラムが始まると、getWords関数が実行し、単語をサーバーから持ってくる。
   isPlaying = true; // ゲームを始める
   wordInput.removeAttribute('disabled'); // .word-inputのdiabled属性を削除
   wordInput.placeholder = '';
   checkInterval = setInterval(checkStatus, 50);
   animate(); // animate関数を実行
+  startTime = Date.now();
 }
 
 /* ゲームを終了する */
@@ -263,6 +254,7 @@ function checkMatch(e) {
       alert('이미 정답으로 입력했습니다.');
       wordInput.value = '';
     } else if (oldWords.includes(wordInput.value)) {
+      startTime = Date.now();
       count++;
       answers.push(wordInput.value);
       let inputValue = wordArray[oldWords.indexOf(wordInput.value)].word;
