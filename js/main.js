@@ -95,8 +95,8 @@ function checkStatus() {
 
 /* axiosライブラリーを使い、単語をOpen APIで持ってくる */
 let words = [];
-function getWords() {
-  axios
+async function getWords() {
+  await axios
     .get(URL)
     .then(res => {
       res.data.forEach(word => {
