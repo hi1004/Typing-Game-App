@@ -97,6 +97,7 @@ function run() {
   wordInput.placeholder = '';
   checkInterval = setInterval(checkStatus, 50);
   animate(); // animate関数を実行
+  startTime = Date.now();
 }
 
 /* ゲームを終了する */
@@ -268,6 +269,7 @@ function checkMatch(e) {
     } else if (oldWords.includes(wordInput.value)) {
       time = 10;
       count++;
+      startTime = Date.now();
       answers.push(wordInput.value);
       let inputValue = wordArray[oldWords.indexOf(wordInput.value)].word;
       if (inputValue.length > 10) {
