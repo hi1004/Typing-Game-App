@@ -52,6 +52,10 @@ function updateTimer() {
   return (timeLeft / 1000).toFixed(2);
 }
 
+// if(time = 0){
+//   updateTimer()
+// }
+
 /* 言語設定 */
 function language() {
   if (JP.checked) {
@@ -142,9 +146,11 @@ function animate() {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = colors[0];
-    ctx.fillText('GAME OVER', innerWidth / 2, innerHeight / 2 - 60);
+    ctx.fillText(' OVER', innerWidth / 2, innerHeight / 2 - 60);
+    timeLimit = 0;
     resetBtn.classList.remove('invisible');
     wordInput.value = '';
+    
     return;
   }
 
@@ -256,6 +262,7 @@ function checkMatch(e) {
     } else if (oldWords.includes(wordInput.value)) {
       startTime = Date.now();
       count++;
+      startTime = Date.now();
       answers.push(wordInput.value);
       let inputValue = wordArray[oldWords.indexOf(wordInput.value)].word;
       if (inputValue.length > 10) {
