@@ -34,11 +34,11 @@
       </header>
 
       <div class="scoreboard">
+        <div class="count"></div>
+        <div class="score"></div>
+        <div class="life"></div>
         <div class="time"></div>
         <div class="try-count"></div>
-        <div class="life"></div>
-        <div class="score"></div>
-        <div class="count"></div>
         <div class="word-count"></div>
       </div>
 
@@ -70,7 +70,7 @@
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">play game</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Acid Rain Game</h5>
               <button
                 type="button"
                 class="btn-close"
@@ -80,31 +80,70 @@
               ></button>
             </div>
             <div class="modal-body">
-              <div role="group" aria-label="Basic radio toggle button group">
-                <input
-                  type="radio"
-                  class="btn-check"
-                  name="btnradio"
-                  id="english"
-                  autocomplete="off"
-                  onclick="language()"
-                  checked
-                />
-                <label class="btn btn-outline-success" for="english"
-                  >English</label
-                >
+              <div class="line">
+                <h4>Language</h4>
+                <div role="group" aria-label="Basic radio toggle button group">
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="btnradio"
+                    id="english"
+                    autocomplete="off"
+                    onclick="language()"
+                    checked
+                  />
+                  <label class="btn btn-outline-success" for="english"
+                    >English</label
+                  >
 
-                <input
-                  type="radio"
-                  class="btn-check"
-                  name="btnradio"
-                  id="japanese"
-                  autocomplete="off"
-                  onclick="language()"
-                />
-                <label class="btn btn-outline-success" for="japanese"
-                  >日本語</label
-                >
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="btnradio"
+                    id="japanese"
+                    autocomplete="off"
+                    onclick="language()"
+                  />
+                  <label class="btn btn-outline-success" for="japanese"
+                    >日本語</label
+                  >
+                </div>
+              </div>
+              <div class="line">
+                <h4>Score</h4>
+                <ul class="score-info">
+                  <li>100点</li>
+                  <li>50点</li>
+                  <li>30点</li>
+                  <li>10点</li>
+                </ul>
+              </div>
+              <div class="line">
+                <h4>Time</h4>
+                <span>10秒</span>
+              </div>
+              <div class="line">
+                <h4>Words</h4>
+                <span>60個(6秒ごとに単語が落ちる）</span>
+              </div>
+              <div class="line">
+                <h4>Description</h4>
+                <p class="description">
+                  [ゲーム開始]<br />
+                  - 言語を選び、ゲームを開始。<br />
+                  - 降りてくる単語を入力する。<br />
+                  - 制限時間は10秒。<br />
+                  - Levelは正解の時上がる。<br />
+
+                  <span>＊ 正解だったら、10秒にリセット。</span><br />
+                  <span>＊ Levelが上がるたびに速度上昇。</span>
+                  <br />
+                  <br />
+                  [ゲーム終了]<br />
+                  - Lifeがゼロの時。<br />
+                  — 制限時間に正解が出ない時。<br />
+                  <span>＊ Lifeは、単語30個を意味する。</span>
+                </p>
               </div>
             </div>
             <div class="modal-footer">

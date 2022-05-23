@@ -59,7 +59,6 @@ canvas {
   left: 50%;
   filter: drop-shadow(0px -10px 5px rgb(255, 255, 255));
   transform: translateX(-50%);
-  border-left: 1px solid rgb(255, 255, 255);
 }
 
 .word-input {
@@ -76,25 +75,46 @@ canvas {
   font-weight: 600 !important;
   text-align: center;
 }
-
+li {
+  position: relative;
+}
+li::before {
+  content: ' ';
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  width: 10px;
+  height: 10px;
+  transform: translateY(-50%);
+}
+li:nth-child(1):before {
+  background-color: #ff006e;
+}
+li:nth-child(2):before {
+  background-color: #14213d;
+}
+li:nth-child(3):before {
+  background-color: #8338ec;
+}
+li:nth-child(4):before {
+  background-color: #606c38;
+}
 .scoreboard {
   position: absolute;
   right: 0px;
-  width: 200px;
+  width: 150px;
   height: 100%;
   align-items: center;
   justify-content: center;
-  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.508);
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   color: #fff;
   z-index: 1;
   top: 60px;
-}
-
-.btn-close {
-  color: red;
-  background: red;
+  padding-left: 30px;
+  text-align: center;
 }
 
 .count,
@@ -103,11 +123,10 @@ canvas {
 .life,
 .try-count {
   font-size: 20px;
-  margin-right: 20px;
   font-weight: 900;
 }
-.word-coun {
-  margin-right: 0;
+.score {
+  color: #00bcd4;
 }
 
 input[type='radio'] {
@@ -128,8 +147,32 @@ input[type='radio'] {
   top: 100px;
   left: 50%;
   transform: translateX(-50%);
-  color: red;
+  color: rgb(233, 162, 30);
   font-size: 30px;
   font-weight: 600;
-  font-family: 'Noto Sans KR', 'Roboto', sans-serif;
+  font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+}
+
+.line {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding: 15px 0;
+  box-sizing: border-box;
+}
+.line > * {
+  margin: 0;
+  font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+}
+.description {
+  width: 250px;
+}
+.description > span {
+  font-size: 14px;
+  color: red;
+}
+.modal-body {
+  padding: 0 50px !important;
 }

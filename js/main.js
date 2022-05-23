@@ -10,51 +10,25 @@ const EN = document.querySelector('#english');
 let speed = 0;
 let count = 1;
 let score = 0;
-let answers = [];
-let tryArray = [];
-let missings = [];
+let time = 10;
 let checkInterval;
 let level = 0.5;
 let URL;
-let time = 10;
-let seconds = 600;
-let min = '';
-let sec = '';
 
-/* モーダルを出力 */
+let createWords;
+
+/* モーダル出力関数、言語設定関数、resizeイベントを実行*/
 function init() {
   visibleModal();
   language();
-  wordInput.addEventListener('input', checkMatch);
-  wordInput.addEventListener('keydown', checkMatch);
-  wordInput.addEventListener('keydown', enterEvent);
   window.addEventListener('resize', resize);
 }
 
+/* モーダルを出力コード */
 function visibleModal() {
   const displayModal = document.querySelector('.start');
   displayModal.click();
 }
-
-const timerLabel = document.querySelector('.time');
-const timeLimit = time * 1000;
-let startTime;
-function updateTimer() {
-  let timeLeft = startTime + timeLimit - Date.now();
-  const timeoutId = setTimeout(() => {
-    updateTimer();
-  }, 10);
-  if (timeLeft <= 0) {
-    timeLeft = 0;
-    clearTimeout(timeoutId);
-    return timeLeft;
-  }
-  return (timeLeft / 1000).toFixed(2);
-}
-
-// if(time = 0){
-//   updateTimer()
-// }
 
 /* 言語設定 */
 function language() {
@@ -67,6 +41,12 @@ function language() {
       level * 300 // ランダム単語150個の中で10桁以下
     }`;
   }
+}
+
+/* Resizeによって、Cavasのサイズが動的に変わる。 */
+function resize() {
+  canvas.width = window.innerWidth; // ブラウザの幅
+  canvas.height = window.innerHeight; // ブラウザの高さ
 }
 
 /* モーダルを隠す（Enter, ESCで）*/
@@ -84,18 +64,29 @@ function modalKeyEvent() {
 const wordInput = document.querySelector('.word-input');
 let isPlaying = false;
 function run() {
+  isPlaying = true;
   getWords(); // プログラムが始まると、getWords関数が実行し、単語をサーバーから持ってくる。
-  isPlaying = true; // ゲームを始める
+  wordInput.addEventListener('input', checkMatch);
+  wordInput.addEventListener('keydown', checkMatch);
+  wordInput.addEventListener('keydown', enterEvent);
   wordInput.removeAttribute('disabled'); // .word-inputのdiabled属性を削除
   wordInput.placeholder = '';
-  checkInterval = setInterval(checkStatus, 50);
+
   animate(); // animate関数を実行
-  startTime = Date.now();
+
+  createWords = setInterval(() => {
+    createWord();
+  }, 6000); // 6秒ずつcreateWord()実行。
+
+  checkInterval = setInterval(checkStatus, 50); // プログラムが実行中にisPlayingの状態を確認
+
+  startTime = Date.now(); // 現在のDateを定義
 }
 
 /* ゲームを終了する */
 function checkStatus() {
   if (missings.length === 30 || updateTimer() === 0) {
+    // 30個ミスまたは、時間切れし
     wordInput.setAttribute('disabled', '');
     isPlaying = false;
     clearInterval(checkInterval);
@@ -104,8 +95,8 @@ function checkStatus() {
 
 /* axiosライブラリーを使い、単語をOpen APIで持ってくる */
 let words = [];
-async function getWords() {
-  await axios
+function getWords() {
+  axios
     .get(URL)
     .then(res => {
       res.data.forEach(word => {
@@ -128,38 +119,42 @@ async function getWords() {
     });
 }
 
+/* 毎秒、「ゲーム終了＆スコア＆単語生成」 */
 const resetBtn = document.querySelector('.reset-btn');
+const colors = ['#ff006e', '#14213d', '#8338ec', '#606c38']; // カラーセット
+let wordArray = [];
 function animate() {
-  /* requestAnimationFrameが１秒で６０回実行する*/
   const currentWordCount = document.querySelector('.word-count');
   const currectCount = document.querySelector('.count');
   const currectScore = document.querySelector('.score');
   const tryCount = document.querySelector('.try-count');
   const life = document.querySelector('.life');
+  const timerLabel = document.querySelector('.time');
 
   ctx.clearRect(0, 0, canvas.width, canvas.height); // canvasで書いたもの消す。残像をなくすため
 
   if (!isPlaying) {
-    isPlaying = true;
+    // isPlayingがcheckStatus()によってfalseの時
     ctx.beginPath();
     ctx.font = '10vw Noto Sans JP';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = colors[0];
-    ctx.fillText(' OVER', innerWidth / 2, innerHeight / 2 - 60);
+    ctx.fillText(' GAME OVER', innerWidth / 2, innerHeight / 2 - 60);
+
     timeLimit = 0;
-    resetBtn.classList.remove('invisible');
+    resetBtn.classList.remove('invisible'); //やり直しボタンが見えるようになる。
     wordInput.value = '';
-    
-    return;
+    return; // animate()が止まる
   }
 
+  /* requestAnimationFrameが１秒で６０回実行する*/
   requestAnimationFrame(animate);
-
   for (let i = 0; i < wordArray.length; i++) {
     wordArray[i].update(); // それぞれのclass Wordにあるメソッドupdate()を実行。
   }
 
+  /* HTMLにそれぞれのスコアを出力する */
   life.innerHTML = `Life : ${30 - missings.length}`;
   tryCount.innerHTML = `Try : ${tryArray.length}`;
   currectCount.innerHTML = `Level : ${count}`; // count出力
@@ -170,30 +165,27 @@ function animate() {
 
 /* 単語を作るcreateWord()関数はそれぞれのclassを生成 */
 let oldWords = [];
-let wordArray = [];
 function createWord() {
-  words = words.slice(0, 60);
+  words = words.slice(0, 60); // getWords()からもらった配列の長さを60個にする。
+  /* 単語を 3個ずつ作る*/
   for (let i = 0; i < 3; i++) {
     const distance = Math.random() * i + 150;
-    let x = (canvas.width / 3) * i + distance;
-    let y = 0; // 初期y座標
+    let x = (canvas.width / 3) * i + distance; // 初期x座標
+    let y = 60; // 初期y座標
     let dy = Math.random() * 0.5 + (Math.random() * level + speed); // 初期y軸の速度
 
     wordArray.push(new Word(x, y, dy, distance, words[0])); // class Wordを生成し、wordArrayに入れて配列に作る。
-    oldWords.push(words.shift()); // サーバーからもらった単語のwords配列の要素を最初から次々と入れる。
+    oldWords.push(words.shift()); // サーバーからもらった単語のwords配列の要素を最初から次々とoldWordsに入れる。
   }
 
+  /*  run()で実行しているcreateWordsが、単語６０個が全部出たら終わる。 */
   if (wordArray.length === 60) {
-    clearInterval(createWords); // 単語６０個が全部出たら、終わる。
+    clearInterval(createWords);
   }
 }
 
-const createWords = setInterval(() => {
-  createWord();
-}, 6000); // 6秒ずつcreateWord()実行。
-
 /* classでWordを作る */
-const colors = ['#ff006e', '#14213d', '#8338ec', '#606c38']; // カラーセット
+let missings = [];
 class Word {
   constructor(x, y, dy, distance, word) {
     this.x = x; // x座標
@@ -204,7 +196,7 @@ class Word {
     this.color = colors;
   }
 
-  /* 書くメソッド */
+  /* 表示メソッド */
   draw() {
     ctx.beginPath();
     ctx.font = '30px Noto Sans JP';
@@ -233,53 +225,101 @@ class Word {
         ctx.fillStyle = this.color[3];
       }
     }
-
     ctx.fillText(this.word, this.x, this.y);
   }
 
-  /* y軸追加速度を移動させ、持続的にcanvasに書くメソッド */
+  /* y軸追加速度を移動させ、持続的にcanvasに表示するメソッド */
   update() {
+    /* 画面から消えたらmissings配列に落ちた単語を入れる */
     if (this.y > innerHeight) {
       missings.push(this.word);
+      /* update()はanimate()から呼び出しているので、missingsの要素の中腹を削除する。 */
       missings = missings.filter((element, index) => {
         return missings.indexOf(element) === index;
       });
     }
-    this.y += this.dy;
-    this.draw();
-    wordInput.focus();
+    this.y += this.dy; //ｙ座標が落ちていく
+    this.draw(); // draw()呼び出し
+    wordInput.focus(); // input tegに書けるようにする
   }
 }
 
+/* タイマー関数を実装 */
+let timeLimit = time * 1000;
+let startTime;
+function updateTimer() {
+  let timeLeft = startTime + timeLimit - Date.now();
+  const timeoutId = setTimeout(() => {
+    updateTimer();
+  }, 50);
+
+  /* 時間切れの時、0になったtimeLeftをreturnする。 */
+  if (timeLeft <= 0) {
+    timeLeft = 0;
+    clearTimeout(timeoutId);
+    return timeLeft;
+  }
+  /* 小数点２桁までtimeLeftを1000で割った値をreturnする。 */
+  return (timeLeft / 1000).toFixed(2);
+}
+
+/* 正解か不正解か判別して処理する関数 */
+let tryArray = [];
+let answers = [];
 function checkMatch(e) {
+  /* Enterを入力したら、実行 */
   if (e.keyCode == 13) {
-    tryArray.push(wordInput.value);
+    tryArray.push(wordInput.value); // tryArrayに入力した値を入れる。
+
+    /* missings配列に入力した値があるかどうか確認 */
     if (missings.includes(wordInput.value)) {
-      alert('이미 지나간 단어입니다.');
-    } else if (answers.includes(wordInput.value)) {
-      alert('이미 정답으로 입력했습니다.');
-      wordInput.value = '';
+      alert('すでに過ぎ去った単語です。');
+
+      /* 画面に表示されている単語oldWords配列に入力した値があるかどうか確認 */
     } else if (oldWords.includes(wordInput.value)) {
-      startTime = Date.now();
-      count++;
-      startTime = Date.now();
-      answers.push(wordInput.value);
+      answers.push(wordInput.value); // 答えの配列answersに入力した値を入れる。
+      count++; // 正解なら1追加
+      speed += 0.05; // スピード追加で難易度増加
+      startTime = Date.now(); // 時間を初期化
+
+      /* oldWordsに入力した値のindexを変換して、wordArrayのwordをinputValueに入れる */
       let inputValue = wordArray[oldWords.indexOf(wordInput.value)].word;
-      if (inputValue.length > 10) {
-        score += 100;
-      } else if (inputValue.length > 8) {
-        score += 50;
-      } else if (inputValue.length > 5) {
-        score += 30;
+      /* 答えを🌞に変える */
+      wordArray[oldWords.indexOf(wordInput.value)].word = `🌞`;
+
+      /* 桁数によるスコア*/
+      if (EN.checked) {
+        if (inputValue.length >= 8) {
+          score += 100;
+        } else if (inputValue.length >= 6) {
+          score += 50;
+        } else if (inputValue.length >= 4) {
+          score += 30;
+        } else {
+          score += 10;
+        }
       } else {
-        score += 10;
+        if (inputValue.length > 4) {
+          score += 100;
+        } else if (inputValue.length > 3) {
+          score += 50;
+        } else if (inputValue.length >= 2) {
+          score += 30;
+        } else {
+          score += 10;
+        }
       }
 
-      wordArray[oldWords.indexOf(wordInput.value)].word = '';
-      speed += 0.05;
+      /*[正解] input tegにhtml classの「is-valid」を追加 */
       wordInput.classList.remove('is-invalid');
       wordInput.classList.add('is-valid');
       wordInput.value = '';
+
+      /* answers配列にすでに正解が入っている場合 */
+    } else if (answers.includes(wordInput.value)) {
+      alert('すでに正解として入力しました。');
+
+      /* [不正解] input tegにhtml classの「is-invalid」を追加 */
     } else {
       wordInput.classList.remove('is-valid');
       wordInput.classList.add('is-invalid');
@@ -287,16 +327,11 @@ function checkMatch(e) {
   }
 }
 
+/* 入力するときEnterを押すとvalueの値が初期化 */
 function enterEvent(e) {
   if (e.keyCode == 13) {
     wordInput.value = '';
   }
 }
 
-/* Resizeによって、Cavasのサイズが動的に変わる。 */
-function resize() {
-  canvas.width = window.innerWidth; // ブラウザの幅
-  canvas.height = window.innerHeight; // ブラウザの高さ
-}
-
-init();
+init(); // init関数の呼び出し
