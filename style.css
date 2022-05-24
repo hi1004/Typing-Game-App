@@ -61,7 +61,7 @@ canvas {
   padding: 0 13px;
   outline: none;
   font-size: 25px !important;
-  color: rgb(0, 0, 0);
+  color: #fff;
   font-weight: 600 !important;
   text-align: center;
 }
