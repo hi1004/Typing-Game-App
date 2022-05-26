@@ -14,13 +14,17 @@ let time = 10;
 let checkInterval;
 let level = 0.5;
 let URL;
-
 let createWords;
+let JP_highScore = 0;
+let EN_highScore = 0;
 
 /* モーダル出力関数、言語設定関数、resizeイベントを実行*/
 function init() {
   visibleModal();
   language();
+  let highScore = 0;
+  EN_highScore = Number(window.localStorage.getItem('ENuser'));
+  JP_highScore = Number(window.localStorage.getItem('JPuser'));
   window.addEventListener('resize', resize);
 }
 
@@ -90,6 +94,20 @@ function checkStatus() {
     wordInput.setAttribute('disabled', '');
     isPlaying = false;
     clearInterval(checkInterval);
+
+    updateHighScore();
+  }
+}
+function updateHighScore() {
+  if (score > EN_highScore && EN.checked) {
+    window.localStorage.setItem('ENuser', score);
+
+    EN_highScore = score;
+    alert('最高記録達成！');
+  } else if (score > JP_highScore && JP.checked) {
+    window.localStorage.setItem('JPuser', score);
+    JP_highScore = score;
+    alert('最高記録達成！');
   }
 }
 
@@ -141,6 +159,29 @@ function animate() {
     ctx.textBaseline = 'middle';
     ctx.fillStyle = colors[0];
     ctx.fillText(' GAME OVER', innerWidth / 2, innerHeight / 2 - 60);
+
+    ctx.font = '2vw Noto Sans JP';
+    ctx.fillStyle = colors[2];
+    if (EN.checked) {
+      ctx.fillText(
+        `highScore: ${EN_highScore}`,
+        innerWidth - innerWidth / 1.7,
+        innerHeight - innerHeight / 1.2
+      );
+    } else {
+      ctx.fillStyle = colors[2];
+      ctx.fillText(
+        `highScore: ${JP_highScore}`,
+        innerWidth - innerWidth / 1.7,
+        innerHeight - innerHeight / 1.2
+      );
+    }
+    ctx.fillStyle = colors[3];
+    ctx.fillText(
+      `Score: ${score}`,
+      innerWidth / 1.7,
+      innerHeight - innerHeight / 1.2
+    );
 
     timeLimit = 0;
     resetBtn.classList.remove('invisible'); //やり直しボタンが見えるようになる。
