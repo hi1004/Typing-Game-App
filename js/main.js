@@ -22,9 +22,11 @@ let EN_highScore = 0;
 function init() {
   visibleModal();
   language();
-  let highScore = 0;
+
   EN_highScore = Number(window.localStorage.getItem('ENuser'));
   JP_highScore = Number(window.localStorage.getItem('JPuser'));
+  window.localStorage.setItem('ENuser', EN_highScore);
+  window.localStorage.setItem('JPuser', JP_highScore);
   window.addEventListener('resize', resize);
 }
 
@@ -101,16 +103,12 @@ function checkStatus() {
 function updateHighScore() {
   if (score > EN_highScore && EN.checked) {
     window.localStorage.setItem('ENuser', score);
-
     EN_highScore = score;
     alert('最高記録達成！');
   } else if (score > JP_highScore && JP.checked) {
     window.localStorage.setItem('JPuser', score);
     JP_highScore = score;
     alert('最高記録達成！');
-  } else {
-    window.localStorage.setItem('ENuser', score);
-    window.localStorage.setItem('JPuser', score);
   }
 }
 
