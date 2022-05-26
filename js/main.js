@@ -108,6 +108,9 @@ function updateHighScore() {
     window.localStorage.setItem('JPuser', score);
     JP_highScore = score;
     alert('最高記録達成！');
+  } else {
+    window.localStorage.setItem('ENuser', score);
+    window.localStorage.setItem('JPuser', score);
   }
 }
 
