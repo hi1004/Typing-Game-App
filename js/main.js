@@ -15,8 +15,8 @@ let checkInterval;
 let level = 0.5;
 let URL;
 let createWords;
-let JP_highScore = 0;
-let EN_highScore = 0;
+let JP_highScore = 1;
+let EN_highScore = 1;
 
 /* モーダル出力関数、言語設定関数、resizeイベントを実行*/
 function init() {
