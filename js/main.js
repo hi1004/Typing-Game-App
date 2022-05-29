@@ -97,6 +97,7 @@ function checkStatus() {
     isPlaying = false;
     clearInterval(checkInterval);
 
+    updatelowScore();
     updateHighScore();
   }
 }
@@ -109,6 +110,14 @@ function updateHighScore() {
     window.localStorage.setItem('JPuser', score);
     JP_highScore = score;
     alert('最高記録達成！');
+  }
+}
+
+function updatelowScore() {
+  if (score < EN_highScore && EN.checked) {
+    alert('もう少し頑張ってみましょう。');
+  } else if (score < JP_highScore && JP.checked) {
+    alert('もう少し頑張ってみましょう。');
   }
 }
 
