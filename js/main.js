@@ -101,6 +101,7 @@ function checkStatus() {
     updateHighScore();
   }
 }
+/* localStorageに最高スコアを保存する */
 function updateHighScore() {
   if (score > EN_highScore && EN.checked) {
     window.localStorage.setItem('ENuser', score);
@@ -113,10 +114,12 @@ function updateHighScore() {
   }
 }
 
+/* 最高スコアより低いスコアなら、alert実行 */
 function updatelowScore() {
-  if (score < EN_highScore && EN.checked) {
-    alert('もう少し頑張ってみましょう。');
-  } else if (score < JP_highScore && JP.checked) {
+  if (
+    (score < EN_highScore && EN.checked) ||
+    (score < JP_highScore && JP.checked)
+  ) {
     alert('もう少し頑張ってみましょう。');
   }
 }
