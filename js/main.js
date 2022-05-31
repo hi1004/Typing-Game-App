@@ -95,7 +95,6 @@ function checkStatus() {
     isPlaying = false;
     clearInterval(checkInterval);
 
-    updatelowScore();
     updateHighScore();
   }
 }
