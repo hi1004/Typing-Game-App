@@ -15,8 +15,8 @@ let checkInterval;
 let level = 0.5;
 let URL;
 let createWords;
-let JP_highScore = 1;
-let EN_highScore = 1;
+let JP_highScore = 0;
+let EN_highScore = 0;
 
 /* モーダル出力関数、言語設定関数、resizeイベントを実行*/
 function init() {
@@ -97,7 +97,6 @@ function checkStatus() {
     isPlaying = false;
     clearInterval(checkInterval);
 
-    updatelowScore();
     updateHighScore();
   }
 }
@@ -115,14 +114,6 @@ function updateHighScore() {
 }
 
 /* 最高スコアより低いスコアなら、alert実行 */
-function updatelowScore() {
-  if (
-    (score < EN_highScore && EN.checked) ||
-    (score < JP_highScore && JP.checked)
-  ) {
-    alert('もう少し頑張ってみましょう。');
-  }
-}
 
 /* axiosライブラリーを使い、単語をOpen APIで持ってくる */
 let words = [];
