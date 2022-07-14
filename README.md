@@ -26,7 +26,8 @@
 
 <details>
 	<summary><b>協業ツール</b></summary>
-
+  
+![image](https://raw.githubusercontent.com/hi1004/Typing-Game-App/master/images/readme.jpg)
 コミュニケーションツールは`Slack`と`kakaoTalk`を使い、効率的に働く環境でプロジェクトをすんなりと進めることができました。
 
 </details>
